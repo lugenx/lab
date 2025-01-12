@@ -23,7 +23,7 @@ func isExists(dirPath string, confPath string) (dir bool, conf bool) {
 //go:embed .lab
 var configTemplate string
 
-func Setup() {
+func Setup() (string, string) {
 	configDirectory, _ := os.UserHomeDir()
 	labDir := filepath.Join(configDirectory, "lab")
 	confFile := filepath.Join(labDir, ".lab")
@@ -45,4 +45,6 @@ func Setup() {
 
 		newConfigFile.Write([]byte(configTemplate))
 	}
+
+	return labDir, confFile
 }
