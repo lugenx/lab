@@ -1,0 +1,17 @@
+# Configuration files
+NetrwTreeListing*
+
+# Mac system files
+.DS_Store
+Thumbs.db
+
+# Ignore air temp folder inside the server directory
+/tmp/
+
+
+# Ignore binary files
+lab
+
+# Backup files
+*.bak
+*.tmp

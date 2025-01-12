@@ -1,0 +1,4 @@
+editor=nvim
+lifedays=7
+path=~/lab
+prefix=lab
