@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -40,10 +41,18 @@ func main() {
 
 	checkRequiredConfigs(config, requiredKeys)
 	// TODO: Arguments will be checked, adjusted, if its numbers should act differently, handle edge cases
-	firstArg := os.Args[1]
-	if len(firstArg) < 1 {
-		fmt.Println("no arguments")
+
+	if len(os.Args) == 1 {
+		fmt.Println("labbbbdirrrr", labdir)
+		ListFiles(labdir)
+		return
 	}
-	CreateAndOpenFile(labdir, config["prefix"], firstArg, config["editor"])
-	fmt.Printf("First ar is %v", firstArg)
+
+	firstArg := os.Args[1]
+
+	if _, err := strconv.ParseInt(firstArg, 10, 64); err == nil {
+		OpenFile(labdir, firstArg, config["editor"])
+	} else {
+		CreateAndOpenFile(labdir, config["prefix"], firstArg, config["editor"])
+	}
 }

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -42,7 +45,16 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 
 	letterCombination := generateLetterCombination(todaysFilesCount)
 
-	filename := prefix + "-" + today + letterCombination + "." + extension
+	validExtension := extension
+	if len(extension) > 0 && extension[:1] == "." {
+		validExtension = extension[1:]
+	}
+	validPrefix := prefix
+	if len(prefix) > 0 {
+		validPrefix = prefix + "-"
+	}
+
+	filename := validPrefix + today + letterCombination + "." + validExtension
 
 	file := filepath.Join(labdir, filename)
 
@@ -50,7 +62,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	if err != nil {
 		log.Fatalf("failed to create file %v", err)
 	}
-	cmd := exec.Command("nvim", file)
+	cmd := exec.Command(editor, file)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -62,5 +74,48 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 
 	if fileInfo.Size() == 0 {
 		os.Remove(file)
+	}
+}
+
+func ListFiles(labdir string) {
+	dir, _ := os.ReadDir(labdir)
+
+	sort.Slice(dir, func(i, j int) bool {
+		infoI, _ := dir[i].Info()
+		infoJ, _ := dir[j].Info()
+		return infoI.ModTime().After(infoJ.ModTime())
+	})
+
+	for n, file := range dir {
+		fileName := file.Name()
+		if fileName != ".lab" {
+			fmt.Printf("[%2d] %v\n", n+1, fileName)
+		}
+	}
+}
+
+func OpenFile(labdir string, tag string, editor string) {
+	dir, _ := os.ReadDir(labdir)
+
+	sort.Slice(dir, func(i, j int) bool {
+		infoI, _ := dir[i].Info()
+		infoJ, _ := dir[j].Info()
+		return infoI.ModTime().After(infoJ.ModTime())
+	})
+
+	for n, file := range dir {
+		fileName := file.Name()
+		file := filepath.Join(labdir, fileName)
+
+		if tag == strconv.Itoa(n+1) {
+
+			cmd := exec.Command(editor, file)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			cmd.Run()
+		}
 	}
 }
