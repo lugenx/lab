@@ -2,31 +2,47 @@ package main
 
 import (
 	_ "embed"
+	"log"
 	"os"
+	"path/filepath"
 )
 
-func hasConfigFile(path string) bool {
-	dir, _ := os.Open(path)
-	entries, _ := dir.ReadDir(0)
-
-	for _, entry := range entries {
-		if entry.Name() == ".lab" {
-			return true
-		}
-		return false
+func isExists(dirPath string, confPath string) (dir bool, conf bool) {
+	_, dirErr := os.Stat(dirPath)
+	if dirErr != nil && !os.IsNotExist(dirErr) {
+		log.Fatalf("failed to access path %v", dirErr)
+	}
+	_, confErr := os.Stat(confPath)
+	if confErr != nil && !os.IsNotExist(confErr) {
+		log.Fatalf("failed to access config %v", confErr)
 	}
 
-	return false
+	return !os.IsNotExist(dirErr), !os.IsNotExist(confErr)
 }
 
 //go:embed .lab
 var configTemplate string
 
-func ensureConfigFile() {
+func Setup() {
 	configDirectory, _ := os.UserHomeDir()
+	labDir := filepath.Join(configDirectory, "lab")
+	confFile := filepath.Join(labDir, ".lab")
 
-	if !hasConfigFile(configDirectory) {
-		newConfigFile, _ := os.Create(".lab")
+	hasDir, hasConf := isExists(labDir, confFile)
+
+	if !hasDir {
+		err := os.MkdirAll(labDir, 0o755)
+		if err != nil {
+			log.Fatalf("failed to create directory %v", err)
+		}
+	}
+
+	if !hasConf {
+		newConfigFile, err := os.Create(confFile)
+		if err != nil {
+			log.Fatalf("failed to create config file %v", newConfigFile)
+		}
+
 		newConfigFile.Write([]byte(configTemplate))
 	}
 }
