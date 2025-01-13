@@ -18,7 +18,6 @@ func checkRequiredConfigs(cfg map[string]string, keys []string) {
 
 func main() {
 	labdir, configFile := Setup()
-
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("failed to read config file %v", err)
@@ -37,14 +36,16 @@ func main() {
 		}
 	}
 
+	if err := DeleteExpiredFiles(labdir, config["lifedays"]); err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+
 	requiredKeys := []string{"editor", "lifedays", "path", "prefix"}
 
 	checkRequiredConfigs(config, requiredKeys)
-	// TODO: Arguments will be checked, adjusted, if its numbers should act differently, handle edge cases
 
 	if len(os.Args) == 1 {
-		fmt.Println("labbbbdirrrr", labdir)
-		ListFiles(labdir)
+		ListFiles(labdir, config["lifedays"])
 		return
 	}
 

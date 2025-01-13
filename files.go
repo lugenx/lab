@@ -31,7 +31,10 @@ func generateLetterCombination(count int) string {
 
 func CreateAndOpenFile(labdir string, prefix string, extension string, editor string) {
 	// 2006-01-02 15:04:05
-	dir, _ := os.ReadDir(labdir)
+	dir, err := os.ReadDir(labdir)
+	if err != nil {
+		log.Fatalf("failed to read directory %v", err)
+	}
 
 	today := time.Now().Format("060102")
 	todaysFilesCount := 0
@@ -58,7 +61,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 
 	file := filepath.Join(labdir, filename)
 
-	_, err := os.Create(file)
+	_, err = os.Create(file)
 	if err != nil {
 		log.Fatalf("failed to create file %v", err)
 	}
@@ -77,9 +80,16 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	}
 }
 
-func ListFiles(labdir string) {
-	dir, _ := os.ReadDir(labdir)
+func ListFiles(labdir string, lifedays string) {
+	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
+	if err != nil {
+		log.Fatal("invalid lifedays value")
+	}
 
+	dir, err := os.ReadDir(labdir)
+	if err != nil {
+		log.Fatalf("failed to read directory %v", err)
+	}
 	sort.Slice(dir, func(i, j int) bool {
 		infoI, _ := dir[i].Info()
 		infoJ, _ := dir[j].Info()
@@ -88,15 +98,22 @@ func ListFiles(labdir string) {
 
 	for n, file := range dir {
 		fileName := file.Name()
-		if fileName != ".lab" {
-			fmt.Printf("[%2d] %v\n", n+1, fileName)
+
+		if fileName == ".lab" {
+			continue
 		}
+		info, _ := file.Info()
+		age := time.Since(info.ModTime())
+		daysLeft := int(float64(days) - age.Hours()/24)
+		fmt.Printf("[%2d] [%dd] %v\n", n+1, daysLeft, file.Name())
 	}
 }
 
 func OpenFile(labdir string, tag string, editor string) {
-	dir, _ := os.ReadDir(labdir)
-
+	dir, err := os.ReadDir(labdir)
+	if err != nil {
+		log.Fatalf("failed to read directory %v", err)
+	}
 	sort.Slice(dir, func(i, j int) bool {
 		infoI, _ := dir[i].Info()
 		infoJ, _ := dir[j].Info()
@@ -118,4 +135,30 @@ func OpenFile(labdir string, tag string, editor string) {
 			cmd.Run()
 		}
 	}
+}
+
+func DeleteExpiredFiles(labdir string, lifedays string) error {
+	files, err := os.ReadDir(labdir)
+	if err != nil {
+		log.Fatalf("failed to read directory %v", err)
+	}
+
+	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
+	if err != nil {
+		return fmt.Errorf("failed to convert string to number %v", err)
+	}
+	duration := time.Duration(days * 24 * float64(time.Hour))
+
+	for _, file := range files {
+		info, _ := file.Info()
+
+		if file.Name() == ".lab" {
+			continue
+		}
+
+		if time.Since(info.ModTime()) > duration {
+			os.Remove(filepath.Join(labdir, file.Name()))
+		}
+	}
+	return nil
 }
