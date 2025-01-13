@@ -139,7 +139,11 @@ func OpenFile(labdir string, tag string, editor string) {
 
 	if n, err := strconv.Atoi(tag); err == nil && n > 0 && n <= len(dir) {
 		file := dir[n-1]
-		cmd := exec.Command(editor, file.Name())
+
+		fileName := file.Name()
+
+		fullFileName := filepath.Join(labdir, fileName)
+		cmd := exec.Command(editor, fullFileName)
 
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
