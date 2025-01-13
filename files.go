@@ -114,26 +114,38 @@ func OpenFile(labdir string, tag string, editor string) {
 	if err != nil {
 		log.Fatalf("failed to read directory %v", err)
 	}
+
 	sort.Slice(dir, func(i, j int) bool {
 		infoI, _ := dir[i].Info()
 		infoJ, _ := dir[j].Info()
 		return infoI.ModTime().After(infoJ.ModTime())
 	})
 
-	for n, file := range dir {
-		fileName := file.Name()
-		file := filepath.Join(labdir, fileName)
+	// for n, file := range dir {
+	// 	fileName := file.Name()
+	// 	file := filepath.Join(labdir, fileName)
+	//
+	// 	if tag == strconv.Itoa(n+1) {
+	//
+	// 		cmd := exec.Command(editor, file)
+	//
+	// 		cmd.Stdin = os.Stdin
+	// 		cmd.Stdout = os.Stdout
+	// 		cmd.Stderr = os.Stderr
+	//
+	// 		cmd.Run()
+	// 	}
+	// }
 
-		if tag == strconv.Itoa(n+1) {
+	if n, err := strconv.Atoi(tag); err == nil && n > 0 && n <= len(dir) {
+		file := dir[n-1]
+		cmd := exec.Command(editor, file.Name())
 
-			cmd := exec.Command(editor, file)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			cmd.Run()
-		}
+		cmd.Run()
 	}
 }
 
