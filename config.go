@@ -35,7 +35,6 @@ func Setup() (string, string) {
 
 	customLabPath := os.Getenv("LABPATH")
 
-	fmt.Println("custom path here", customLabPath)
 	if customLabPath != "" {
 
 		if strings.HasPrefix(customLabPath, "~") {
