@@ -2,9 +2,11 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func isExists(dirPath string, confPath string) (dir bool, conf bool) {
@@ -24,7 +26,25 @@ func isExists(dirPath string, confPath string) (dir bool, conf bool) {
 var configTemplate string
 
 func Setup() (string, string) {
-	configDirectory, _ := os.UserHomeDir()
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("failed to get user home directory", err)
+	}
+
+	configDirectory := homeDir
+
+	customLabPath := os.Getenv("LABPATH")
+
+	fmt.Println("custom path here", customLabPath)
+	if customLabPath != "" {
+
+		if strings.HasPrefix(customLabPath, "~") {
+			customLabPath = strings.Replace(customLabPath, "~", homeDir, 1)
+		}
+
+		configDirectory = customLabPath
+	}
+
 	labDir := filepath.Join(configDirectory, "lab")
 	confFile := filepath.Join(labDir, ".lab")
 
@@ -40,10 +60,15 @@ func Setup() (string, string) {
 	if !hasConf {
 		newConfigFile, err := os.Create(confFile)
 		if err != nil {
-			log.Fatalf("failed to create config file %v", newConfigFile)
+			log.Fatalf("failed to create config file %v", err)
+		}
+		defer newConfigFile.Close()
+
+		_, err = newConfigFile.Write([]byte(configTemplate))
+		if err != nil {
+			log.Fatalf("failed to write to config file", err)
 		}
 
-		newConfigFile.Write([]byte(configTemplate))
 	}
 
 	return labDir, confFile

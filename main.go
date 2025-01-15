@@ -40,7 +40,7 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	requiredKeys := []string{"editor", "lifedays", "path", "prefix"}
+	requiredKeys := []string{"editor", "lifedays", "prefix"}
 
 	checkRequiredConfigs(config, requiredKeys)
 
