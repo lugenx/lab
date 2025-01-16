@@ -1,10 +1,20 @@
 # Lab
-**Lab** is a quick way to spin up throwaway files for rapid experimenting. No more fuss about filenames or folders—just type `lab js` (or any extension) and start coding instantly in your editor. All files are auto-named (e.g., `250112a.js`) and live in a `lab` folder. By default, they vanish after 7 days, keeping things tidy.
+**Lab** is a quick way to spin up throwaway files for rapid experimenting. Reduces the overhead of trying out code snippets. No more fuss about filenames or folders—just type `lab js` (or any extension) and start coding instantly in your editor. All files are auto-named (e.g., `250112a.js`) and live in a `lab` folder. By default, they vanish after 7 days, keeping things tidy.
 
 ## Install
+### macOS
 ```bash
-curl -L https://github.com/yourusername/lab/releases/latest/download/lab-mac -o lab && chmod +x lab && sudo mv lab /usr/local/bin/
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-darwin-amd64 -o lab && chmod +x lab && sudo mv lab /usr/local/bin/
 ```
+### Linux
+```bash
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-linux-amd64 -o lab && chmod +x lab && sudo mv lab /usr/local/bin/
+```
+### Windows
+```bash
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-windows-amd64.exe -o lab.exe
+```
+Then move lab.exe to a directory in your PATH.
 
 ## Usage
 Create a new file:
@@ -21,16 +31,16 @@ lab
 To open, use: lab <number>
 To create: lab <extension>
 
-1) 250112c.js     [6d]
-2) 250112b.py     [6d]
-3) 250112a.go     [6d]
+[1] 250112c.js     [6d]
+[2] 250112b.py     [6d]
+[3] 250112a.go     [6d]
 ```
 
 Open a file:
 ```bash
+lab 0       # opens config
 lab 1       # opens most recent file
 lab 2       # opens second file
-lab 0       # opens config
 ```
 
 ## Features
