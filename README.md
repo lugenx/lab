@@ -1,5 +1,5 @@
 # Lab
-**Lab** is a quick way to spin up throwaway files for rapid experimenting. Reduces the overhead of trying out code snippets. No more fuss about filenames or folders—just type `lab js` (or any extension) and start coding instantly in your editor. All files are auto-named (e.g., `250112a.js`) and live in a `lab` folder. By default, they vanish after 7 days, keeping things tidy.
+**Lab** lets you experiment with code instantly—just type `lab js` (or any extension) and your editor opens, ready to go. No more overhead of creating files and folders. Your experiments are automatically organized with smart names (e.g., `250112a.js`) in a `lab` folder, and they clean themselves up after 7 days to keep things tidy.
 
 ## Install
 ### macOS (Intel)
@@ -22,11 +22,11 @@ curl -L -o lab-windows-amd64.exe https://github.com/lugenx/lab/releases/latest/d
 Move-Item .\lab-windows-amd64.exe "C:\Windows\System32\lab.exe"
 
 ## Usage
-Create a new file:
+Open a new file:
 ```bash
-lab js      # creates JavaScript file
-lab py      # creates Python file
-lab any     # creates file with any extension
+lab js      # opens a new JavaScript file
+lab py      # opens a new Python file
+lab any     # opens a new file with any extension
 ```
 
 List your files:

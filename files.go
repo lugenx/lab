@@ -80,21 +80,32 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	}
 }
 
+func filterAndSortFiles(labdir string) []os.DirEntry {
+	dir, err := os.ReadDir(labdir)
+	if err != nil {
+		log.Fatalf("failed to read directory %v", err)
+	}
+	var noDotLabDir []os.DirEntry
+	for _, file := range dir {
+		if file.Name() != ".lab" {
+			noDotLabDir = append(noDotLabDir, file)
+		}
+	}
+	sort.Slice(noDotLabDir, func(i, j int) bool {
+		infoI, _ := noDotLabDir[i].Info()
+		infoJ, _ := noDotLabDir[j].Info()
+		return infoI.ModTime().After(infoJ.ModTime())
+	})
+	return noDotLabDir
+}
+
 func ListFiles(labdir string, lifedays string) {
 	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
 	if err != nil {
 		log.Fatal("invalid lifedays value")
 	}
 
-	dir, err := os.ReadDir(labdir)
-	if err != nil {
-		log.Fatalf("failed to read directory %v", err)
-	}
-	sort.Slice(dir, func(i, j int) bool {
-		infoI, _ := dir[i].Info()
-		infoJ, _ := dir[j].Info()
-		return infoI.ModTime().After(infoJ.ModTime())
-	})
+	filteredAndSortedDir := filterAndSortFiles(labdir)
 
 	const (
 		Reset   = "\033[0m"
@@ -104,7 +115,7 @@ func ListFiles(labdir string, lifedays string) {
 		Yellow  = "\033[33m"
 	)
 	// less than 2, because there there is already .lab file
-	if len(dir) < 2 {
+	if len(filteredAndSortedDir) < 2 {
 		fmt.Printf("\n\t%sYour lab is empty!%s Create a new file with: %slab <extension>%s (e.g., %slab js%s)\n\n",
 			Cyan, Reset, Green, Reset, Yellow, Reset)
 		return
@@ -115,21 +126,13 @@ func ListFiles(labdir string, lifedays string) {
 
 	fmt.Printf("\t\033[36mFile(s):\033[0m\n")
 
-	fileCounter := 0
+	for i, file := range filteredAndSortedDir {
 
-	for _, file := range dir {
-		fileName := file.Name()
-
-		if fileName == ".lab" {
-			continue
-		}
-		// additional counter is neccesary so skipped file doesnt count
-		fileCounter++
 		info, _ := file.Info()
 		age := time.Since(info.ModTime())
 		daysLeft := int(float64(days) - age.Hours()/24)
 
-		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", fileCounter, daysLeft, file.Name())
+		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", i+1, daysLeft, file.Name())
 
 	}
 	fmt.Println("")
@@ -137,43 +140,17 @@ func ListFiles(labdir string, lifedays string) {
 }
 
 func OpenFile(labdir string, tag string, editor string) {
-	dir, err := os.ReadDir(labdir)
-	if err != nil {
-		log.Fatalf("failed to read directory %v", err)
-	}
+	filteredAndSortedFiles := filterAndSortFiles(labdir)
 
-	sort.Slice(dir, func(i, j int) bool {
-		infoI, _ := dir[i].Info()
-		infoJ, _ := dir[j].Info()
-		return infoI.ModTime().After(infoJ.ModTime())
-	})
-
-	// for n, file := range dir {
-	// 	fileName := file.Name()
-	// 	file := filepath.Join(labdir, fileName)
-	//
-	// 	if tag == strconv.Itoa(n+1) {
-	//
-	// 		cmd := exec.Command(editor, file)
-	//
-	// 		cmd.Stdin = os.Stdin
-	// 		cmd.Stdout = os.Stdout
-	// 		cmd.Stderr = os.Stderr
-	//
-	// 		cmd.Run()
-	// 	}
-	// }
-
-	if n, err := strconv.Atoi(tag); err == nil && n < len(dir) {
+	if n, err := strconv.Atoi(tag); err == nil && n <= len(filteredAndSortedFiles) {
 
 		var fileName string
 
-		if n == 0 {
+		if n, _ := strconv.Atoi(tag); n == 0 {
 			fileName = ".lab"
 		} else {
-			fileName = dir[n].Name()
+			fileName = filteredAndSortedFiles[n-1].Name()
 		}
-
 		fullFileName := filepath.Join(labdir, fileName)
 		cmd := exec.Command(editor, fullFileName)
 
@@ -188,23 +165,15 @@ func OpenFile(labdir string, tag string, editor string) {
 }
 
 func DeleteExpiredFiles(labdir string, lifedays string) error {
-	files, err := os.ReadDir(labdir)
-	if err != nil {
-		log.Fatalf("failed to read directory %v", err)
-	}
-
+	filteredAndSortedFiles := filterAndSortFiles(labdir)
 	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
 	if err != nil {
 		return fmt.Errorf("failed to convert string to number %v", err)
 	}
 	duration := time.Duration(days * 24 * float64(time.Hour))
 
-	for _, file := range files {
+	for _, file := range filteredAndSortedFiles {
 		info, _ := file.Info()
-
-		if file.Name() == ".lab" {
-			continue
-		}
 
 		if time.Since(info.ModTime()) > duration {
 			os.Remove(filepath.Join(labdir, file.Name()))
