@@ -4,17 +4,17 @@
 ## Install
 ### macOS
 ```bash
-curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-darwin-amd64 -o lab && chmod +x lab && sudo mv lab /usr/local/bin/
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-darwin-amd64 -o /tmp/lab && chmod +x /tmp/lab && sudo mv /tmp/lab /usr/local/bin/lab
 ```
 ### Linux
 ```bash
-curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-linux-amd64 -o lab && chmod +x lab && sudo mv lab /usr/local/bin/
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-linux-amd64 -o /tmp/lab && chmod +x /tmp/lab && sudo mv /tmp/lab /usr/local/bin/lab
 ```
 ### Windows
-```bash
-curl -L https://github.com/lugenx/lab/releases/latest/download/lab-v0.1.0-windows-amd64.exe -o lab.exe
+```powershell
+curl -L -o lab-windows-amd64.exe https://github.com/lugenx/lab/releases/latest/download/lab-windows-amd64.exe
 ```
-Then move lab.exe to a directory in your PATH.
+Move-Item .\lab-windows-amd64.exe "C:\Windows\System32\lab.exe"
 
 ## Usage
 Create a new file:
