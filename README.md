@@ -2,9 +2,14 @@
 **Lab** is a quick way to spin up throwaway files for rapid experimenting. Reduces the overhead of trying out code snippets. No more fuss about filenames or folders—just type `lab js` (or any extension) and start coding instantly in your editor. All files are auto-named (e.g., `250112a.js`) and live in a `lab` folder. By default, they vanish after 7 days, keeping things tidy.
 
 ## Install
-### macOS
+### macOS (Intel)
 ```bash
 curl -L https://github.com/lugenx/lab/releases/latest/download/lab-darwin-amd64 -o /tmp/lab && chmod +x /tmp/lab && sudo mv /tmp/lab /usr/local/bin/lab
+```
+### macOS (Apple Silicon)
+```bash
+curl -L https://github.com/lugenx/lab/releases/latest/download/lab-darwin-arm64 -o /tmp/lab && chmod +x /tmp/lab && sudo mv /tmp/lab /usr/local/bin/lab
+
 ```
 ### Linux
 ```bash
