@@ -115,17 +115,21 @@ func ListFiles(labdir string, lifedays string) {
 
 	fmt.Printf("\t\033[36mFile(s):\033[0m\n")
 
-	for n, file := range dir {
+	fileCounter := 0
+
+	for _, file := range dir {
 		fileName := file.Name()
 
 		if fileName == ".lab" {
 			continue
 		}
+		// additional counter is neccesary so skipped file doesnt count
+		fileCounter++
 		info, _ := file.Info()
 		age := time.Since(info.ModTime())
 		daysLeft := int(float64(days) - age.Hours()/24)
 
-		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", n+1, daysLeft, file.Name())
+		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", fileCounter, daysLeft, file.Name())
 
 	}
 	fmt.Println("")
@@ -160,14 +164,14 @@ func OpenFile(labdir string, tag string, editor string) {
 	// 	}
 	// }
 
-	if n, err := strconv.Atoi(tag); err == nil && n <= len(dir) {
+	if n, err := strconv.Atoi(tag); err == nil && n < len(dir) {
 
 		var fileName string
 
 		if n == 0 {
 			fileName = ".lab"
 		} else {
-			fileName = dir[n-1].Name()
+			fileName = dir[n].Name()
 		}
 
 		fullFileName := filepath.Join(labdir, fileName)
@@ -178,6 +182,8 @@ func OpenFile(labdir string, tag string, editor string) {
 		cmd.Stderr = os.Stderr
 
 		cmd.Run()
+	} else {
+		fmt.Printf("Invalid file index: %s (index out of range)\n", tag)
 	}
 }
 
