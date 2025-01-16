@@ -96,6 +96,25 @@ func ListFiles(labdir string, lifedays string) {
 		return infoI.ModTime().After(infoJ.ModTime())
 	})
 
+	const (
+		Reset   = "\033[0m"
+		Green   = "\033[32m"
+		Cyan    = "\033[36m"
+		Magenta = "\033[35m"
+		Yellow  = "\033[33m"
+	)
+	// less than 2, because there there is already .lab file
+	if len(dir) < 2 {
+		fmt.Printf("\n\t%sYour lab is empty!%s Create a new file with: %slab <extension>%s (e.g., %slab js%s)\n\n",
+			Cyan, Reset, Green, Reset, Yellow, Reset)
+		return
+	}
+
+	fmt.Printf("\n  To open, use: lab \033[33m<number>\033[0m\n")
+	fmt.Printf("  To create: lab <extension>\n\n")
+
+	fmt.Printf("\t\033[36mFile(s):\033[0m\n")
+
 	for n, file := range dir {
 		fileName := file.Name()
 
@@ -105,8 +124,12 @@ func ListFiles(labdir string, lifedays string) {
 		info, _ := file.Info()
 		age := time.Since(info.ModTime())
 		daysLeft := int(float64(days) - age.Hours()/24)
-		fmt.Printf("[%2d] [%dd] %v\n", n+1, daysLeft, file.Name())
+
+		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", n+1, daysLeft, file.Name())
+
 	}
+	fmt.Println("")
+	// fmt.Printf("\n\033[35m  Tip:\033[0m Frequently modified files might be worth keeping permanently\n\n")
 }
 
 func OpenFile(labdir string, tag string, editor string) {
@@ -137,10 +160,15 @@ func OpenFile(labdir string, tag string, editor string) {
 	// 	}
 	// }
 
-	if n, err := strconv.Atoi(tag); err == nil && n > 0 && n <= len(dir) {
-		file := dir[n-1]
+	if n, err := strconv.Atoi(tag); err == nil && n <= len(dir) {
 
-		fileName := file.Name()
+		var fileName string
+
+		if n == 0 {
+			fileName = ".lab"
+		} else {
+			fileName = dir[n-1].Name()
+		}
 
 		fullFileName := filepath.Join(labdir, fileName)
 		cmd := exec.Command(editor, fullFileName)

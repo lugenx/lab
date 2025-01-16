@@ -32,7 +32,9 @@ func main() {
 		parts := strings.Split(line, "=")
 
 		if len(parts) == 2 {
-			config[parts[0]] = parts[1]
+			key := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			config[key] = value
 		}
 	}
 
