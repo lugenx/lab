@@ -71,7 +71,13 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	cmd.Run()
+	err = cmd.Run()
+	if err != nil {
+		if strings.Contains(err.Error(), "executable file not found") {
+			fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in ~/lab/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor)
+			return
+		}
+	}
 
 	fileInfo, _ := os.Stat(file)
 
@@ -157,7 +163,13 @@ func OpenFile(labdir string, tag string, editor string) {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
-		cmd.Run()
+		err = cmd.Run()
+		if err != nil {
+			if strings.Contains(err.Error(), "executable file not found") {
+				fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in ~/lab/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor)
+				return
+			}
+		}
 	} else {
 		fmt.Printf("Invalid file index: %s (index out of range)\n", tag)
 	}
