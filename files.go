@@ -121,10 +121,10 @@ func ListFiles(labdir string, lifedays string) {
 		return
 	}
 
-	fmt.Printf("\n  To open, use: lab \033[33m<number>\033[0m\n")
+	fmt.Printf("\n  To open, use: lab" + Green + " <number>\n" + Reset)
 	fmt.Printf("  To create: lab <extension>\n\n")
 
-	fmt.Printf("\t\033[36mFile(s):\033[0m\n")
+	fmt.Printf("\t\033[36mLab File(s):\033[0m\n\n")
 
 	for i, file := range filteredAndSortedDir {
 
@@ -132,8 +132,7 @@ func ListFiles(labdir string, lifedays string) {
 		age := time.Since(info.ModTime())
 		daysLeft := int(float64(days) - age.Hours()/24)
 
-		fmt.Printf("\t\033[33m[%2d]\033[0m [%dd] %v\n", i+1, daysLeft, file.Name())
-
+		fmt.Printf("\t"+Green+"%5s"+Reset+" [%dd]  %v\n", fmt.Sprintf("[%d] ", i+1), daysLeft, file.Name())
 	}
 	fmt.Println("")
 	// fmt.Printf("\n\033[35m  Tip:\033[0m Frequently modified files might be worth keeping permanently\n\n")

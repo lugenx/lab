@@ -11,6 +11,10 @@ Thumbs.db
 
 # Ignore binary files
 lab
+lab-darwin-amd64
+lab-darwin-arm64
+lab-linux-amd64
+lab-windows-amd64.exe
 
 # Backup files
 *.bak
