@@ -86,7 +86,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	}
 }
 
-func filterAndSortFiles(labdir string) []os.DirEntry {
+func organizeFiles(labdir string) []os.DirEntry {
 	dir, err := os.ReadDir(labdir)
 	if err != nil {
 		log.Fatalf("failed to read directory %v", err)
@@ -111,7 +111,7 @@ func ListFiles(labdir string, lifedays string) {
 		log.Fatal("invalid lifedays value")
 	}
 
-	filteredAndSortedDir := filterAndSortFiles(labdir)
+	organizedFiles := organizeFiles(labdir)
 
 	const (
 		Reset   = "\033[0m"
@@ -119,9 +119,10 @@ func ListFiles(labdir string, lifedays string) {
 		Cyan    = "\033[36m"
 		Magenta = "\033[35m"
 		Yellow  = "\033[33m"
+		Grey    = "\033[90m"
 	)
 	// less than 2, because there there is already .lab file
-	if len(filteredAndSortedDir) < 2 {
+	if len(organizedFiles) < 2 {
 		fmt.Printf("\n\t%sYour lab is empty!%s Create a new file with: %slab <extension>%s (e.g., %slab js%s)\n\n",
 			Cyan, Reset, Green, Reset, Yellow, Reset)
 		return
@@ -131,8 +132,8 @@ func ListFiles(labdir string, lifedays string) {
 	fmt.Printf("  To create: lab <extension>\n\n")
 
 	fmt.Printf("\t\033[36mLab File(s):\033[0m\n\n")
-
-	for i, file := range filteredAndSortedDir {
+	// fmt.Printf("\t            "+Grey+"%v\n"+Reset, labdir)
+	for i, file := range organizedFiles {
 
 		info, _ := file.Info()
 		age := time.Since(info.ModTime())
@@ -145,16 +146,16 @@ func ListFiles(labdir string, lifedays string) {
 }
 
 func OpenFile(labdir string, tag string, editor string) {
-	filteredAndSortedFiles := filterAndSortFiles(labdir)
+	organizedFiles := organizeFiles(labdir)
 
-	if n, err := strconv.Atoi(tag); err == nil && n <= len(filteredAndSortedFiles) {
+	if n, err := strconv.Atoi(tag); err == nil && n <= len(organizedFiles) {
 
 		var fileName string
 
 		if n, _ := strconv.Atoi(tag); n == 0 {
 			fileName = ".lab"
 		} else {
-			fileName = filteredAndSortedFiles[n-1].Name()
+			fileName = organizedFiles[n-1].Name()
 		}
 		fullFileName := filepath.Join(labdir, fileName)
 		cmd := exec.Command(editor, fullFileName)
@@ -176,14 +177,14 @@ func OpenFile(labdir string, tag string, editor string) {
 }
 
 func DeleteExpiredFiles(labdir string, lifedays string) error {
-	filteredAndSortedFiles := filterAndSortFiles(labdir)
+	organizedFiles := organizeFiles(labdir)
 	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
 	if err != nil {
 		return fmt.Errorf("failed to convert string to number %v", err)
 	}
 	duration := time.Duration(days * 24 * float64(time.Hour))
 
-	for _, file := range filteredAndSortedFiles {
+	for _, file := range organizedFiles {
 		info, _ := file.Info()
 
 		if time.Since(info.ModTime()) > duration {
