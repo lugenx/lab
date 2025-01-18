@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const labVersion = "1.0.3"
+
 func checkRequiredConfigs(cfg map[string]string, keys []string) {
 	for _, key := range keys {
 		if value, ok := cfg[key]; !ok || value == "" {
@@ -38,13 +40,18 @@ func main() {
 		}
 	}
 
+	requiredKeys := []string{"editor", "lifedays"}
+
+	checkRequiredConfigs(config, requiredKeys)
 	if err := DeleteExpiredFiles(labdir, config["lifedays"]); err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	requiredKeys := []string{"editor", "lifedays"}
-
-	checkRequiredConfigs(config, requiredKeys)
+	if len(os.Args) > 1 && strings.HasPrefix(os.Args[1], "-") {
+		organizedFiles := organizeFiles(labdir)
+		handleFlags(labVersion, organizedFiles, labdir)
+		return
+	}
 
 	if len(os.Args) == 1 {
 		ListFiles(labdir, config["lifedays"])
@@ -52,7 +59,6 @@ func main() {
 	}
 
 	firstArg := os.Args[1]
-
 	if _, err := strconv.ParseInt(firstArg, 10, 64); err == nil {
 		OpenFile(labdir, firstArg, config["editor"])
 	} else {
