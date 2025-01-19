@@ -145,18 +145,16 @@ func ListFiles(labdir string, lifedays string) {
 
 		if minutesLeft < 60 {
 			minutesLeftStr := strconv.Itoa(minutesLeft)
-			padding := 3 - len(minutesLeftStr)
-			timeLeft = fmt.Sprintf(Red+"%*s[%sm]"+Reset, padding, "", minutesLeftStr)
+			timeLeft = fmt.Sprintf(Red+" %sm"+Reset, minutesLeftStr)
 		} else if hoursLeft < 25 {
 			hoursLeftStr := strconv.Itoa(hoursLeft)
-			padding := 3 - len(hoursLeftStr)
-			timeLeft = fmt.Sprintf(Yellow+"%*s[%sh]"+Reset, padding, "", hoursLeftStr)
+			timeLeft = fmt.Sprintf(Yellow+" %sh"+Reset, hoursLeftStr)
 		} else {
 			daysLeftStr := strconv.Itoa(daysLeft)
-			padding := 3 - len(daysLeftStr)
-			timeLeft = fmt.Sprintf("%*s[%sd]", padding, "", daysLeftStr)
+			timeLeft = fmt.Sprintf(" %sd", daysLeftStr)
 		}
-		fmt.Printf("\t"+Green+"%5s "+Reset+"%s  %v\n", fmt.Sprintf("[%d] ", i+1), timeLeft, file.Name())
+		padding := 18
+		fmt.Printf("\t"+Green+"%5s "+Reset+"%-*s"+Grey+"%s\n", fmt.Sprintf("[%d] ", i+1), padding, file.Name(), timeLeft)
 	}
 	fmt.Println("")
 	// fmt.Printf("\n\033[35m  Tip:\033[0m Frequently modified files might be worth keeping permanently\n\n")
