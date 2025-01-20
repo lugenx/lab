@@ -122,7 +122,7 @@ func ListFiles(labdir string, lifedays string, displayPath string) {
 		Grey    = "\033[90m"
 	)
 	// less than 2, because there there is already .lab file
-	if len(organizedFiles) < 2 {
+	if len(organizedFiles) == 0 {
 		fmt.Printf("\n\t%sYour lab is empty!%s Create a new file with: %slab <extension>%s (e.g., %slab js%s)\n\n",
 			Cyan, Reset, Green, Reset, Yellow, Reset)
 		return
