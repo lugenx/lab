@@ -35,9 +35,9 @@ lab
 
 Lab Files: ~/lab/
 
-[1]  250112c.js     6d    
-[2]  250112b.py     12h   
-[3]  250112a.go     45m   
+[1]  250112c.js     6d    # will be deleted in 6 days
+[2]  250112b.py     12h   # will be deleted in 12 hours
+[3]  250112a.go     45m   # will be deleted in 45 minutes
 ```
 
 Open or manage files:
@@ -57,7 +57,6 @@ lab -h, --help         # show help
 - **Instant Start**: `lab <extension>` opens a fresh file.
 - **Quick Access**: `lab <number>` reopens recent files.
 - **Auto-Cleanup**: Files expire automatically after 7 days (configurable).
-- **Simple Listing**: Just run `lab` to see your files, newest first.
 - **Smart Time Display**: Shows remaining time in days/hours/minutes with color indicators
 - **Simple Listing**: Just run lab to see your files, newest first
 
