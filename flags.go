@@ -17,6 +17,30 @@ const (
 	Red     = "\033[31m"
 )
 
+const helpText = `
+ Usage:
+   lab <extension>            Create and open a new file (e.g., lab js)
+   lab <number>               Open file by number
+   lab 0                      Open config file
+   lab -v, --version          Show version
+   lab -h, --help             Show this help
+   lab -d, --delete <number>  Delete file by number
+
+ Examples:
+   lab js                  Create a JavaScript file
+   lab 1                   Open most recent file
+   lab 0                   Edit config
+   lab -d 2                Delete file #2
+
+ Configuration (~/.lab):
+   editor=nvim             Your preferred editor
+   lifedays=7              Days to keep files
+   prefix=lab              Prefix for filenames
+
+ Files are stored in ~/lab/ (or custom location via LABPATH)
+ Files expire after configured days (default 7)
+`
+
 func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string) {
 	if len(os.Args) < 2 {
 		fmt.Println("Error: No flag provided. Use -v or -d with an index.")
@@ -41,6 +65,8 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 	case "-v", "--version":
 		fmt.Printf("lab version %v\n", labVersion)
 		os.Exit(0)
+	case "-h", "--help":
+		fmt.Println(helpText)
 	case "-d", "--delete":
 		if fileDir == "" || file == nil {
 			fmt.Printf("\n  " + Yellow + "No file specified for deletion.\n\n" + Reset)
