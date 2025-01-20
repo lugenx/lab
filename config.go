@@ -24,13 +24,14 @@ func isExists(dirPath string, confPath string) (dir bool, conf bool) {
 //go:embed .lab
 var configTemplate string
 
-func Setup() (string, string) {
+func Setup() (string, string, string) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal("failed to get user home directory", err)
 	}
 
 	configDirectory := homeDir
+	var displayPath string
 
 	customLabPath := os.Getenv("LABPATH")
 
@@ -41,6 +42,13 @@ func Setup() (string, string) {
 		}
 
 		configDirectory = customLabPath
+		if strings.HasPrefix(customLabPath, homeDir) {
+			displayPath = "~" + customLabPath[len(homeDir):] + "lab/"
+		} else {
+			displayPath = customLabPath + "lab/"
+		}
+	} else {
+		displayPath = "~/lab/"
 	}
 
 	labDir := filepath.Join(configDirectory, "lab")
@@ -69,5 +77,5 @@ func Setup() (string, string) {
 
 	}
 
-	return labDir, confFile
+	return labDir, confFile, displayPath
 }

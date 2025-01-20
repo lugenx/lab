@@ -105,7 +105,7 @@ func organizeFiles(labdir string) []os.DirEntry {
 	return noDotLabDir
 }
 
-func ListFiles(labdir string, lifedays string) {
+func ListFiles(labdir string, lifedays string, displayPath string) {
 	days, err := strconv.ParseFloat(strings.TrimSpace(lifedays), 64)
 	if err != nil {
 		log.Fatal("invalid lifedays value")
@@ -131,8 +131,7 @@ func ListFiles(labdir string, lifedays string) {
 	fmt.Printf("\n  To open, use: lab" + Green + " <number>\n" + Reset)
 	fmt.Printf("  To create: lab <extension>\n\n")
 
-	fmt.Printf("\t\033[36mLab File(s):\033[0m\n\n")
-	// fmt.Printf("\t            "+Grey+"%v\n"+Reset, labdir)
+	fmt.Println("\t" + Cyan + " Lab Files:" + Reset + Grey + "  " + displayPath + "\n" + Reset)
 	for i, file := range organizedFiles {
 
 		info, _ := file.Info()

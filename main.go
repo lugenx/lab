@@ -19,7 +19,7 @@ func checkRequiredConfigs(cfg map[string]string, keys []string) {
 }
 
 func main() {
-	labdir, configFile := Setup()
+	labdir, configFile, displayPath := Setup()
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("failed to read config file %v", err)
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	if len(os.Args) == 1 {
-		ListFiles(labdir, config["lifedays"])
+		ListFiles(labdir, config["lifedays"], displayPath)
 		return
 	}
 
