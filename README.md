@@ -33,26 +33,33 @@ List your files:
 ```bash
 lab
 
-To open, use: lab <number>
-To create: lab <extension>
+Lab Files: ~/lab/
 
-[1] 250112c.js     [6d]
-[2] 250112b.py     [6d]
-[3] 250112a.go     [6d]
+[1]  250112c.js     6d    
+[2]  250112b.py     12h   
+[3]  250112a.go     45m   
 ```
 
-Open a file:
+Open or manage files:
 ```bash
-lab 0       # opens config
-lab 1       # opens most recent file
-lab 2       # opens second file
+lab 0                  # open config file
+lab 1                  # open most recent file
+lab 2                  # open second file
+lab -d 2, --delete 2   # delete file #2
+```
+Other commands:
+```bash
+lab -v, --version      # show version
+lab -h, --help         # show help
 ```
 
 ## Features
-- **Instant Start**: `lab <extension>` creates and opens a fresh file.
+- **Instant Start**: `lab <extension>` opens a fresh file.
 - **Quick Access**: `lab <number>` reopens recent files.
 - **Auto-Cleanup**: Files expire automatically after 7 days (configurable).
 - **Simple Listing**: Just run `lab` to see your files, newest first.
+- **Smart Time Display**: Shows remaining time in days/hours/minutes with color indicators
+- **Simple Listing**: Just run lab to see your files, newest first
 
 ## Configuration
 Lab creates a config file at `~/lab/.lab`:
@@ -60,13 +67,7 @@ Lab creates a config file at `~/lab/.lab`:
 editor=nvim          # your preferred editor
 lifedays=7          # how long to keep files
 prefix=lab          # file prefix
-<!--
-show_tips=true      # show random tips
-show_instructions=true
-show_filepath=true
--->
 ```
-
 You can also set `LABPATH` environment variable to change the lab directory location from the default `~/lab`.
 
 Focus on experimenting and trying out ideas without distractions—Lab simplifies the process so you can start coding immediately.
