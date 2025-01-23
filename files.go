@@ -61,10 +61,11 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 
 	file := filepath.Join(labdir, filename)
 
-	_, err = os.Create(file)
+	createdFile, err := os.Create(file)
 	if err != nil {
 		log.Fatalf("failed to create file %v", err)
 	}
+	createdFile.Close()
 	cmd := exec.Command(editor, file)
 
 	cmd.Stdin = os.Stdin
@@ -120,6 +121,7 @@ func ListFiles(labdir string, lifedays string, displayPath string) {
 		Magenta = "\033[35m"
 		Yellow  = "\033[33m"
 		Grey    = "\033[90m"
+		Red     = "\033[31m"
 	)
 	// less than 2, because there there is already .lab file
 	if len(organizedFiles) == 0 {
