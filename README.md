@@ -70,3 +70,7 @@ prefix=lab          # file prefix
 You can also set `LABPATH` environment variable to change the lab directory location from the default `~/lab`.
 
 Focus on experimenting and trying out ideas without distractions—Lab simplifies the process so you can start coding immediately.
+
+ ## Demo
+ See Lab in action:
+ ![Lab Demo](./demo.gif)
