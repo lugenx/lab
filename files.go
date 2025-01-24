@@ -66,8 +66,10 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 		log.Fatalf("failed to create file %v", err)
 	}
 	createdFile.Close()
-	cmd := exec.Command(editor, file)
-
+	//---- TODO: WIP
+	parts := strings.Fields(editor)
+	cmd := exec.Command(parts[0], append(parts[1:], file)...)
+	//----
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -174,8 +176,10 @@ func OpenFile(labdir string, tag string, editor string) {
 			fileName = organizedFiles[n-1].Name()
 		}
 		fullFileName := filepath.Join(labdir, fileName)
-		cmd := exec.Command(editor, fullFileName)
-
+		// TODO: WIP
+		parts := strings.Fields(editor)
+		cmd := exec.Command(parts[0], append(parts[1:], fullFileName)...)
+		//-----
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
