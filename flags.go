@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 )
@@ -19,18 +20,24 @@ const (
 
 const helpText = `
  Usage:
-   lab <extension>            Create and open a new file (e.g., lab js)
-   lab <number>               Open file by number
-   lab 0                      Open config file
-   lab -v, --version          Show version
-   lab -h, --help             Show this help
-   lab -d, --delete <number>  Delete file by number
+   lab <extension>                   Create and open a new file (e.g., lab js)
+   lab <number>                      Open file by number
+   lab 0                             Open config file
+   lab -v, --version                 Show version
+   lab -h, --help                    Show this help
+   lab -d, --delete <number>         Delete file by number
+   lab -p, --path                    Show file path
+   lab -r, --run <number> <command>  Run any command on the specified file (e.g., python, node, cat)
 
  Examples:
    lab js                  Create a JavaScript file
    lab 1                   Open most recent file
    lab 0                   Edit config
    lab -d 2                Delete file #2
+   lab -p 1                Show the path of file #1
+   lab -r 1 node           Run the file #1 with Node.js
+   lab -r 2 vim            Open in different editor
+   lab -r 3 cat            View file contents
 
  Configuration (~/.lab):
    editor=nvim             Your preferred editor
@@ -50,7 +57,6 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 	flag := os.Args[1]
 	var file os.DirEntry
 	var fileDir string
-
 	if len(os.Args) > 2 {
 		index, err := strconv.Atoi(os.Args[2])
 		if err != nil || index < 1 || index > len(organizedFiles) {
@@ -65,14 +71,43 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 	case "-v", "--version":
 		fmt.Printf("lab version %v\n", labVersion)
 		os.Exit(0)
+
 	case "-h", "--help":
 		fmt.Println(helpText)
+
 	case "-d", "--delete":
 		if fileDir == "" || file == nil {
 			fmt.Printf("\n  " + Yellow + "No file specified for deletion.\n\n" + Reset)
 			return
 		}
-		os.Remove(fileDir)
+		err := os.Remove(fileDir)
+		if err != nil {
+			fmt.Printf(Red+"Error: Failed to delete '%s': %v\n"+Reset, file.Name(), err)
+			return
+		}
 		fmt.Printf("\n  "+Red+"%v "+Reset+"has been deleted from the lab!\n\n", file.Name())
+
+	case "-p", "--path":
+		fmt.Println(fileDir)
+
+	case "-r", "--run":
+		if (len(os.Args)) < 4 {
+			fmt.Println(Red + "Missing runner command. Provide a runner as a third argument." + Reset)
+			return
+		}
+		runner := os.Args[3]
+		if fileDir == "" || file == nil {
+			fmt.Println(Red + "No file specified to run. Provide a valid file number." + Reset)
+			return
+		}
+		cmd := exec.Command(runner, fileDir)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		err := cmd.Run()
+		if err != nil {
+			fmt.Printf(Red+"Error: Failed to execute '%s' on file '%s': %v\n"+Reset, runner, fileDir, err)
+		}
 	}
 }

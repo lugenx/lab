@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const labVersion = "1.1.1"
+const labVersion = "1.2.0"
 
 func checkRequiredConfigs(cfg map[string]string, keys []string) {
 	for _, key := range keys {
@@ -31,14 +31,6 @@ func main() {
 	config := make(map[string]string)
 
 	for _, line := range contentLines {
-		// TODO: WIP
-		// parts := strings.Split(line, "=")
-		// fmt.Println("---->", parts)
-		// if len(parts) == 2 {
-		// 	key := strings.TrimSpace(parts[0])
-		// 	value := strings.TrimSpace(parts[1])
-		// 	config[key] = value
-		// }
 		i := strings.Index(line, "=")
 		if i != -1 {
 			key := strings.TrimSpace(line[:i])
@@ -46,7 +38,7 @@ func main() {
 			config[key] = value
 		}
 	}
-	// ---------------------------
+
 	requiredKeys := []string{"editor", "lifedays"}
 
 	checkRequiredConfigs(config, requiredKeys)

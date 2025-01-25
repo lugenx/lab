@@ -174,6 +174,7 @@ func ListFiles(labdir string, lifedays string, displayPath string) {
 
 	fmt.Printf("\n  To open, use: lab" + Green + " <number>\n" + Reset)
 	fmt.Printf("  To create: lab <extension>\n\n")
+	fmt.Printf("  To see all options: lab -h\n\n")
 
 	fmt.Println("\t" + Cyan + " Lab Files:" + Reset + Grey + "  " + displayPath + "\n" + Reset)
 	for i, file := range organizedFiles {
