@@ -12,8 +12,6 @@ import (
 	"time"
 )
 
-// craete file will take labdir and extension and create a file with correct extension in that directory
-
 // generate a letter combination for a given count (a, b, ..., z, aa, ab, ..., zzzzz, ...)
 func generateLetterCombination(count int) string {
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -27,6 +25,42 @@ func generateLetterCombination(count int) string {
 	}
 
 	return combination
+}
+
+func parseEditorCommand(cmd string) []string {
+	var args []string
+	var current string
+	var quoteChar rune
+	inQuotes := false
+
+	for _, r := range cmd {
+		switch r {
+		case '\'', '"':
+			if inQuotes && r == quoteChar {
+				inQuotes = false
+			} else if !inQuotes {
+				inQuotes = true
+				quoteChar = r
+			} else {
+				current += string(r)
+			}
+		case ' ':
+			if !inQuotes {
+				if current != "" {
+					args = append(args, current)
+					current = ""
+				}
+			} else {
+				current += string(r)
+			}
+		default:
+			current += string(r)
+		}
+	}
+	if current != "" {
+		args = append(args, current)
+	}
+	return args
 }
 
 func CreateAndOpenFile(labdir string, prefix string, extension string, editor string) {
@@ -66,10 +100,16 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 		log.Fatalf("failed to create file %v", err)
 	}
 	createdFile.Close()
-	//---- TODO: WIP
-	parts := strings.Fields(editor)
-	cmd := exec.Command(parts[0], append(parts[1:], file)...)
-	//----
+
+	var cmd *exec.Cmd
+	// using 'if' to save some performance for users who has single editor command
+	if len(strings.Fields(editor)) > 1 {
+		parts := parseEditorCommand(editor)
+		cmd = exec.Command(parts[0], append(parts[1:], file)...)
+	} else {
+		cmd = exec.Command(editor, file)
+	}
+
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -160,7 +200,6 @@ func ListFiles(labdir string, lifedays string, displayPath string) {
 		fmt.Printf("\t"+Green+"%5s "+Reset+"%-*s"+Grey+"%s\n", fmt.Sprintf("[%d] ", i+1), padding, file.Name(), timeLeft)
 	}
 	fmt.Println("")
-	// fmt.Printf("\n\033[35m  Tip:\033[0m Frequently modified files might be worth keeping permanently\n\n")
 }
 
 func OpenFile(labdir string, tag string, editor string) {
@@ -176,10 +215,17 @@ func OpenFile(labdir string, tag string, editor string) {
 			fileName = organizedFiles[n-1].Name()
 		}
 		fullFileName := filepath.Join(labdir, fileName)
-		// TODO: WIP
-		parts := strings.Fields(editor)
-		cmd := exec.Command(parts[0], append(parts[1:], fullFileName)...)
-		//-----
+
+		var cmd *exec.Cmd
+		// using 'if' to save some performance for users who has single editor command
+		if len(strings.Fields(editor)) > 1 {
+
+			parts := parseEditorCommand(editor)
+			cmd = exec.Command(parts[0], append(parts[1:], fullFileName)...)
+		} else {
+			cmd = exec.Command(editor, fullFileName)
+		}
+
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
