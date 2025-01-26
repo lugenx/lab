@@ -23,6 +23,7 @@ const helpText = `
    lab <extension>                   Create and open a new file (e.g., lab js)
    lab <number>                      Open file by number
    lab 0                             Open config file
+   lab                               List all lab files
    lab -v, --version                 Show version
    lab -h, --help                    Show this help
    lab -d, --delete <number>         Delete file by number
@@ -33,6 +34,7 @@ const helpText = `
    lab js                  Create a JavaScript file
    lab 1                   Open most recent file
    lab 0                   Edit config
+   lab                     List all lab files
    lab -d 2                Delete file #2
    lab -p 1                Show the path of file #1
    lab -r 1 node           Run the file #1 with Node.js
@@ -77,7 +79,7 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 
 	case "-d", "--delete":
 		if fileDir == "" || file == nil {
-			fmt.Printf("\n  " + Yellow + "No file specified for deletion.\n\n" + Reset)
+			fmt.Printf("\n  " + Yellow + "No file specified for deletion. Use 'lab -d <number>'\n\n" + Reset)
 			return
 		}
 		err := os.Remove(fileDir)
@@ -88,11 +90,15 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 		fmt.Printf("\n  "+Red+"%v "+Reset+"has been deleted from the lab!\n\n", file.Name())
 
 	case "-p", "--path":
+		if fileDir == "" || file == nil {
+			fmt.Printf("\n  " + Yellow + "No file specified for retrieving the path. Use 'lab -p <number>'\n\n" + Reset)
+			return
+		}
 		fmt.Println(fileDir)
 
 	case "-r", "--run":
 		if (len(os.Args)) < 4 {
-			fmt.Println(Red + "Missing runner command. Provide a runner as a third argument." + Reset)
+			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>'\n\n" + Reset)
 			return
 		}
 		runner := os.Args[3]
