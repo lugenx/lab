@@ -101,12 +101,13 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>'\n\n" + Reset)
 			return
 		}
-		runner := os.Args[3]
+		runner := os.Args[3:]
 		if fileDir == "" || file == nil {
 			fmt.Println(Red + "No file specified to run. Provide a valid file number." + Reset)
 			return
 		}
-		cmd := exec.Command(runner, fileDir)
+		runner = append(runner, fileDir)
+		cmd := exec.Command(runner[0], runner[1:]...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
