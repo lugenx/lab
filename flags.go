@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -101,12 +102,19 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>'\n\n" + Reset)
 			return
 		}
-		runner := os.Args[3]
+		runner := strings.Join(os.Args[3:], " ")
 		if fileDir == "" || file == nil {
 			fmt.Println(Red + "No file specified to run. Provide a valid file number." + Reset)
 			return
 		}
-		cmd := exec.Command(runner, fileDir)
+		var cmd *exec.Cmd
+		if strings.Contains(runner, "'") || strings.Contains(runner, "\"") {
+			parts := parseCommand(runner)
+			cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+		} else {
+			parts := strings.Fields(runner)
+			cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+		}
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

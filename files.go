@@ -27,7 +27,7 @@ func generateLetterCombination(count int) string {
 	return combination
 }
 
-func parseEditorCommand(cmd string) []string {
+func parseCommand(cmd string) []string {
 	var args []string
 	var current string
 	var quoteChar rune
@@ -104,7 +104,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	var cmd *exec.Cmd
 	// using 'if' to save some performance for users who has single editor command
 	if len(strings.Fields(editor)) > 1 {
-		parts := parseEditorCommand(editor)
+		parts := parseCommand(editor)
 		cmd = exec.Command(parts[0], append(parts[1:], file)...)
 	} else {
 		cmd = exec.Command(editor, file)
@@ -221,7 +221,7 @@ func OpenFile(labdir string, tag string, editor string) {
 		// using 'if' to save some performance for users who has single editor command
 		if len(strings.Fields(editor)) > 1 {
 
-			parts := parseEditorCommand(editor)
+			parts := parseCommand(editor)
 			cmd = exec.Command(parts[0], append(parts[1:], fullFileName)...)
 		} else {
 			cmd = exec.Command(editor, fullFileName)
