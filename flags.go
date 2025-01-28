@@ -98,23 +98,34 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 		fmt.Println(fileDir)
 
 	case "-r", "--run":
-		if (len(os.Args)) < 4 {
+
+		if (len(os.Args)) < 3 {
 			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>'\n\n" + Reset)
 			return
 		}
-		runner := strings.Join(os.Args[3:], " ")
-		if fileDir == "" || file == nil {
-			fmt.Println(Red + "No file specified to run. Provide a valid file number." + Reset)
-			return
-		}
+
 		var cmd *exec.Cmd
-		if strings.Contains(runner, "'") || strings.Contains(runner, "\"") {
-			parts := parseCommand(runner)
-			cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+		var runner string
+
+		if len(os.Args) == 3 {
+			cmd = exec.Command(fileDir)
+			cmd.Dir = labdir
 		} else {
-			parts := strings.Fields(runner)
-			cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+
+			runner = strings.Join(os.Args[3:], " ")
+			if fileDir == "" || file == nil {
+				fmt.Println(Red + "No file specified to run. Provide a valid file number." + Reset)
+				return
+			}
+			if strings.Contains(runner, "'") || strings.Contains(runner, "\"") {
+				parts := parseCommand(runner)
+				cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+			} else {
+				parts := strings.Fields(runner)
+				cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
+			}
 		}
+
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const labVersion = "1.2.1"
+const labVersion = "1.2.2"
 
 func checkRequiredConfigs(cfg map[string]string, keys []string) {
 	for _, key := range keys {
