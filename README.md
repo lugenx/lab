@@ -104,7 +104,7 @@ editor=nvim          # your preferred editor
 lifedays=7          # how long to keep files
 prefix=lab          # file prefix
 ```
-You can also set `LABPATH` environment variable to change the lab directory location from the default `~/lab`.
+You can also set the `LABPATH` environment variable to change the parent directory of the lab from the default home directory (`~/lab`).
 
 Focus on experimenting and trying out ideas without distractions—Lab simplifies the process so you can start coding immediately.
 

@@ -59,8 +59,8 @@ func main() {
 
 	firstArg := os.Args[1]
 	if _, err := strconv.ParseInt(firstArg, 10, 64); err == nil {
-		OpenFile(labdir, firstArg, config["editor"])
+		OpenFile(labdir, firstArg, config["editor"], displayPath)
 	} else {
-		CreateAndOpenFile(labdir, config["prefix"], firstArg, config["editor"])
+		CreateAndOpenFile(labdir, config["prefix"], firstArg, config["editor"], displayPath)
 	}
 }

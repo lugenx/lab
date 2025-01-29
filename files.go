@@ -63,7 +63,7 @@ func parseCommand(cmd string) []string {
 	return args
 }
 
-func CreateAndOpenFile(labdir string, prefix string, extension string, editor string) {
+func CreateAndOpenFile(labdir string, prefix string, extension string, editor string, displayPath string) {
 	// 2006-01-02 15:04:05
 	dir, err := os.ReadDir(labdir)
 	if err != nil {
@@ -117,7 +117,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	err = cmd.Run()
 	if err != nil {
 		if strings.Contains(err.Error(), "executable file not found") {
-			fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in ~/lab/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor)
+			fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in %s/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor, displayPath)
 			os.Remove(file)
 			return
 		}
@@ -203,7 +203,7 @@ func ListFiles(labdir string, lifedays string, displayPath string) {
 	fmt.Println("")
 }
 
-func OpenFile(labdir string, tag string, editor string) {
+func OpenFile(labdir string, tag string, editor string, displayPath string) {
 	organizedFiles := organizeFiles(labdir)
 
 	if n, err := strconv.Atoi(tag); err == nil && n <= len(organizedFiles) {
@@ -234,7 +234,7 @@ func OpenFile(labdir string, tag string, editor string) {
 		err = cmd.Run()
 		if err != nil {
 			if strings.Contains(err.Error(), "executable file not found") {
-				fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in ~/lab/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor)
+				fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in %s.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor, displayPath)
 				return
 			}
 		}

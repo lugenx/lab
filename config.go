@@ -36,7 +36,10 @@ func Setup() (string, string, string) {
 	customLabPath := os.Getenv("LABPATH")
 
 	if customLabPath != "" {
+		customLabPath = strings.TrimSuffix(customLabPath, "/") + "/"
+	}
 
+	if customLabPath != "" {
 		if strings.HasPrefix(customLabPath, "~") {
 			customLabPath = strings.Replace(customLabPath, "~", homeDir, 1)
 		}
