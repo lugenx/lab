@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const labVersion = "1.2.2"
+const labVersion = "1.3.0"
 
 func checkRequiredConfigs(cfg map[string]string, keys []string) {
 	for _, key := range keys {
@@ -35,6 +35,10 @@ func main() {
 		if i != -1 {
 			key := strings.TrimSpace(line[:i])
 			value := strings.TrimSpace(line[i+1:])
+			if strings.Contains(value, "#") {
+				fmt.Printf(Yellow+"\n  Comments are not supported in config. Please remove '#' and everything after it from: "+Reset+Red+"%s"+Reset+Yellow+"in %s.lab\n\n"+Reset, line, displayPath)
+				os.Exit(1)
+			}
 			config[key] = value
 		}
 	}

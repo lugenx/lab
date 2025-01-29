@@ -75,9 +75,13 @@ lab --path <number>
 lab -r <number> <command>
 lab --run <number> <command>
 
+# Run the file if its compiled executable
+lab -r, --run <number>
+
 # Example:
 lab -d 2               # delete file #2
 lab -p 1               # show file path
+lab -r 1               # run file #1 if it is executable binary
 lab -r 1 node          # run file with Node.js
 lab -r 2 vim           # open file in different editor
 lab -r 3 cat           # view file contents

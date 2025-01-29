@@ -30,6 +30,7 @@ const helpText = `
    lab -d, --delete <number>         Delete file by number
    lab -p, --path                    Show file path
    lab -r, --run <number> <command>  Run any command on the specified file (e.g., python, node, cat)
+   lab -r, --run <number>            Run the file if it is executable
 
  Examples:
    lab js                  Create a JavaScript file
@@ -38,6 +39,7 @@ const helpText = `
    lab                     List all lab files
    lab -d 2                Delete file #2
    lab -p 1                Show the path of file #1
+   lab -r 1                Run file #1 if it is executable binary
    lab -r 1 node           Run the file #1 with Node.js
    lab -r 2 vim            Open in different editor
    lab -r 3 cat            View file contents
@@ -100,7 +102,7 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 	case "-r", "--run":
 
 		if (len(os.Args)) < 3 {
-			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>'\n\n" + Reset)
+			fmt.Println("\n  " + Yellow + "Missing arguments. Use 'lab -r <number> <command>' or simply 'lab -r <number>' if the file is executable\n" + Reset)
 			return
 		}
 
