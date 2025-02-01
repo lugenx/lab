@@ -44,7 +44,7 @@ const helpText = `
    lab -r 2 vim            Open in different editor
    lab -r 3 cat            View file contents
 
- Configuration (~/.lab):
+ Configuration (.lab):
    editor=nvim             Your preferred editor
    lifedays=7              Days to keep files
    prefix=lab              Prefix for filenames
@@ -111,7 +111,6 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 
 		if len(os.Args) == 3 {
 			cmd = exec.Command(fileDir)
-			cmd.Dir = labdir
 		} else {
 
 			runner = strings.Join(os.Args[3:], " ")
@@ -127,6 +126,8 @@ func handleFlags(labVersion string, organizedFiles []os.DirEntry, labdir string)
 				cmd = exec.Command(parts[0], append(parts[1:], fileDir)...)
 			}
 		}
+
+		cmd.Dir = labdir
 
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
