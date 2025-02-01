@@ -117,7 +117,7 @@ func CreateAndOpenFile(labdir string, prefix string, extension string, editor st
 	err = cmd.Run()
 	if err != nil {
 		if strings.Contains(err.Error(), "executable file not found") {
-			fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in %s/.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor, displayPath)
+			fmt.Printf("\n  Editor %s not found. \n  \033[33mSet your preferred editor in %s.lab\033[0m (examples below):\n\n\teditor=code    # for VS Code\n\teditor=nvim    # for Neovim\n\teditor=vim     # for Vim\n\n", editor, displayPath)
 			os.Remove(file)
 			return
 		}
